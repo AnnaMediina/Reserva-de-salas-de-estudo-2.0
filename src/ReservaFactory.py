@@ -10,7 +10,6 @@ class ReservaFactory:
 
     @classmethod
     def definir_politica(cls, nova_politica: PoliticaDeReserva):
-        """Permite trocar a política em tempo de execução"""
         cls._politica_atual = nova_politica
 
     @classmethod
@@ -18,12 +17,9 @@ class ReservaFactory:
         tem_conflito = cls._politica_atual.verificar_conflito(sala, usuario, inicio, fim)
         
         if tem_conflito:
-            print(" Falha ao criar reserva devido a conflito de horário.\n")
+            print(f"Falha ao criar reserva para {usuario.nome} devido a conflito de horário.")
             return None
-        
-        
-        
         nova_reserva = Reserva(usuario, sala, inicio, fim)
-        GerenciadorDeReservas().adicionar_reserva(nova_reserva)
-        print(f"reserva criada com sucesso para {usuario.nome}.")
+        GerenciadorDeReservas.get_instancia().adicionar_reserva(nova_reserva)
+        print(f" -> reserva criada com sucesso para {usuario.nome}.")
         return nova_reserva
