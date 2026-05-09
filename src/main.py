@@ -1,34 +1,54 @@
-from usuario import Professor, Aluno, Externo
-from sala import Laboratorio, EstudoIndividual, EstudoEmGrupo
-from reserva import Reserva
+from usuario import Professor, Aluno
+from sala_factory import LaboratorioFactory, EstudoIndividualFactory
+from ReservaFactory import ReservaFactory
+from estrategia_reserva import PoliticaPrimeiroChegar, PoliticaPrioridadeDocente
+from gerenciador_reservas import GerenciadorDeReservas
 from datetime import datetime, timedelta
 
 def main():
-    print("TESTE")
-    prof = Professor("Turing", "DOC-001")
-    aluno = Aluno("Pedro", "POO-999")
-    visitante = Externo("Joao", "111.222.333-44")
-    
-    print(prof)
-    print(aluno)
-    print(visitante)
+    print("SISTEMA DE RESERVAS ")
+    print("-"*20)
 
-    print("\nTESTE de SALAS")
-    lab = Laboratorio("L-101", 30, ["30 PCs", "Projetor HD", "Lousa Digital"])
-    sala_individual = EstudoIndividual("I-05")
-    sala_grupo = EstudoEmGrupo("G-20", 6, quantidade_mesas=1, quantidade_quadros=2)
+    fabrica_lab = LaboratorioFactory()
+    lab = fabrica_lab.criar_sala("L-101", capacidade=30, equipamentos=["PCs", "Projetor"])
     
-    print(lab)
-    print(sala_individual)
-    print(sala_grupo)
+    aluno1 = Aluno("João", "POO2-123")
+    aluno2 = Aluno("Maria", "POO2-456")
+    prof = Professor("Fabio", "DOC-001")
 
-    print("\nTESTE RESERVA")
+    agora = datetime.now()
+    daqui_a_pouco = agora + timedelta(hours=2)
+
+    print("\nTESTE 1: POLÍTICA 'PRIMEIRO A CHEGAR'")
+    ReservaFactory.definir_politica(PoliticaPrimeiroChegar())
     
-    inicio = datetime.now()
-    fim = inicio + timedelta(hours=2)
+    print("1. João tenta reservar o Lab L-101")
+    reserva_joao = ReservaFactory.criar_reserva(aluno1, lab, agora, daqui_a_pouco)
+
+    print("\n2. Maria tenta reservar o MESMO Lab no MESMO horário")
+    reserva_maria = ReservaFactory.criar_reserva(aluno2, lab, agora, daqui_a_pouco)
+    if not reserva_maria:
+        print("Sistema bloqueou a Maria corretamente!!!!!!!")
+
+
+    print("\nTESTE 2: POLÍTICA 'PRIORIDADE DOCENTE' (Observer Pull)")
+    ReservaFactory.definir_politica(PoliticaPrioridadeDocente())
     
-    reserva1 = Reserva(prof, lab, inicio, fim)
-    print(reserva1)
+    print("3. Professor Fabio precisa do Lab L-101 agora. Ele tenta reservarFabio")
+    # Ao fazer isso, a Strategy vai cancelar a reserva do João e disparar o Observer
+    reserva_prof = ReservaFactory.criar_reserva(prof, lab, agora, daqui_a_pouco)
+    print("\nTESTE 3: MODIFICANDO RESERVA (Observer Push)")
+    print("4. Professor Fabio decide estender a aula em 1 horaFabio")
+    novo_fim = daqui_a_pouco + timedelta(hours=1)
+    reserva_prof.modificar_horario(agora, novo_fim)
+    print("\nTESTE 4: ESTADO DO SINGLETON (Repositório)")
+
+    gerenciador = GerenciadorDeReservas.get_instancia()
+    todas_reservas = gerenciador.obter_todas_reservas()
+    
+    print(f"Total de reservas no sistema: {len(todas_reservas)}")
+    for r in todas_reservas:
+        print(f" -> {r}")
 
 if __name__ == "__main__":
     main()
