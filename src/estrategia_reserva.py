@@ -4,7 +4,7 @@ from sala import Sala
 from usuario import Usuario, Professor
 from gerenciador_reservas import GerenciadorDeReservas
 
-# o strategy define qual a politica de agendamento, como o sistema lida com os conflitos de horários e prioridades.
+# a classe PoliticaDeReserva implementa o padrão strategy e define qual será a politica de agendamento, ou seja, como o sistema lida com os conflitos de horários e prioridades.
 class PoliticaDeReserva(ABC):
     @abstractmethod
     def verificar_conflito(self, sala: Sala, usuario: Usuario, data: datetime, inicio: datetime, fim: datetime) -> bool:
