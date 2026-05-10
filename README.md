@@ -14,18 +14,18 @@ Este projeto implementa um sistema para reserva de salas em um campus universit�
 ## 📦 Estrutura do Projeto
 
 docs/
-  ├── diagrama_reserva_salas.pdf # Diagrama UML do projeto
+├── diagrama_reserva_salas.pdf # Diagrama UML do projeto
 
 src/
-  ├── main.py # Ponto de entrada e menu interativo
-  ├── sala.py # Classes Sala, Laboratorio, EstudoIndividual eEstudoEmGrupo
-  ├── sala_factory.py # Factories para criação de salas
-  ├── usuario.py # Usuario, Professor, Aluno, Externo (observers)
-  ├── reserva.py # Reserva (subject) – notificações push/pull
-  ├── observer.py # Interfaces Observer e Subject
-  ├── gerenciador_reservas.py # Singleton – repositório e consultas
-  ├── estrategia_reserva.py # Strategy – políticas de gerenciamento de conflito
-  ├── reserva_factory.py # Criação/modificação de reservas com política
+├── main.py # Ponto de entrada e menu interativo
+├── sala.py # Classes Sala, Laboratorio, EstudoIndividual eEstudoEmGrupo
+├── sala_factory.py # Factories para criação de salas
+├── usuario.py # Usuario, Professor, Aluno, Externo (observers)
+├── reserva.py # Reserva (subject) – notificações push/pull
+├── observer.py # Interfaces Observer e Subject
+├── gerenciador_reservas.py # Singleton – repositório e consultas
+|── estrategia_reserva.py # Strategy – políticas de gerenciamento de conflito
+├── reserva_factory.py # Criação/modificação de reservas com política
 
 
 ## 🚀 Como Executar
