@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
 
+# classe base para as salas com atributos comuns e método abstrato para detalhes específicos.
 class Sala(ABC):
     def __init__(self, numero_sala: str, capacidade_total: int):
         self.numero_sala = numero_sala
@@ -8,6 +9,7 @@ class Sala(ABC):
     @abstractmethod
     def obter_detalhes(self) -> str:
         pass
+
     def __str__(self):
         return f"Sala {self.numero_sala} (Capacidade: {self.capacidade_total})"
 
@@ -21,9 +23,8 @@ class Laboratorio(Sala):
         return f"Laboratório, Equipamentos: {lista_equip}"
     
 class EstudoIndividual(Sala):
-    def __init__(self, numero_sala: str, equipamentos: list = None):
+    def __init__(self, numero_sala: str):
         super().__init__(numero_sala, capacidade_total=1)
-        self.equipamentos = equipamentos if equipamentos else []
 
     def obter_detalhes(self) -> str:
         return "Estudo Individual"
