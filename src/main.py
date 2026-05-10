@@ -40,41 +40,45 @@ def main():
         print("Política de Reserva alterada para Prioridade Docente.")
     
     print("""\nMenu:
-          1- Entrar
-          2- Sair""")
+    1- Entrar
+    2- Relatório Diário
+    3- Sair""")
 
     op = input("Escolha uma opção: ")
-    while op != "2":
+    while op != "3":
+
         if op == "1":
+
             nome = input("Digite seu nome: ")
-            tipo = input("Você é Aluno, Professor ou Externo? ").strip().lower()
+            tipo = input("Você é Aluno, Professor ou Visitante? ").strip().lower()
+
             if tipo == "aluno":
                 matricula = input("Digite sua matrícula: ")
                 usuario = Aluno(nome, matricula)
+
                 reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
                 if reservas_usuario:
                     print(f"\nBem-vindo de volta, {usuario.nome}!\n")
-                    print(f"Suas reservas ativas, {usuario.nome}:")
-                    for r in reservas_usuario:
-                        print(f" -> {r}")
+            
             elif tipo == "professor":
                 identificador = input("Digite seu identificador: ")
                 usuario = Professor(nome, identificador)
+
                 reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
                 if reservas_usuario:
                     print(f"\nBem-vindo de volta, {usuario.nome}!\n")
-                    print(f"Suas reservas ativas, {usuario.nome}:")
-                    for r in reservas_usuario:
-                        print(f" -> {r}")
-            elif tipo == "externo":
+                   
+            elif tipo == "visitante":
                 cpf = input("Digite seu CPF: ")
                 usuario = Externo(nome, cpf)
+
                 reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
                 if reservas_usuario:
                     print(f"\nBem-vindo de volta, {usuario.nome}!\n")
-                    print(f"Suas reservas ativas, {usuario.nome}:")
-                    for r in reservas_usuario:
-                        print(f" -> {r}")
+
             else:
                 print("Tipo de usuário inválido. Encerrando.")
                 return
@@ -83,17 +87,45 @@ def main():
                 print(f"Bem-vindo, {usuario}!")
             
             print("""\nMenu de Ações:
-                1- Fazer Reserva
-                2- Listar Reservas
-                3- Modificar Reserva
-                4- Sair""")
+            1- Ver salas disponíveis
+            2- Fazer reserva
+            3- Listar minhas reservas
+            4- Modificar reserva
+            5- Cancelar reserva
+            6- Sair""")
 
-            acao = input("Escolha uma ação: ")
-            while acao != "4":
+            acao = input("\nEscolha uma ação: ")
 
-                if acao == "1": 
+            while acao != "6":
+
+                if acao == "1":
+
+                    data_str = input("Digite a data (dd/mm/yyyy): ")
+                    hora_ini_str = input("Hora início (HH:MM): ")
+                    hora_fim_str = input("Hora fim (HH:MM): ")
+
+                    try:
+                        data = datetime.strptime(data_str, "%d/%m/%Y")
+                        hora_ini = datetime.strptime(hora_ini_str, "%H:%M")
+                        hora_fim = datetime.strptime(hora_fim_str, "%H:%M")
+                    except:
+                        print("Formato inválido.")
+                        continue
+
+                    disponiveis = gerenciador.obter_salas_disponiveis(data, hora_ini, hora_fim, lista_salas)
+
+                    if disponiveis:
+                        print(f"Salas disponíveis em {data_str} das {hora_ini_str} às {hora_fim_str}:")
+                        for s in disponiveis:
+                            print(f" - {s} --> {s.obter_detalhes()}")
+                    else:
+                        print("Nenhuma sala disponível neste horário.")
+
+                # FAZER RESERVA
+                if acao == "2": 
 
                     numero_sala = input("Digite o número da sala que deseja reservar: ").strip().upper()
+
                     while numero_sala not in [s.numero_sala for s in lista_salas]:
                         print("Número de sala inválido. Tente novamente.")
                         numero_sala = input("Digite o número da sala que deseja reservar: ").strip().upper()
@@ -110,68 +142,159 @@ def main():
                     except ValueError:
                         print("Formato de data ou hora inválido. Encerrando.")
                         return
+                    
+                    inicio_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_inicio.hour, hora_inicio.minute)
+                    fim_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_fim.hour, hora_fim.minute)
 
-                    reserva = ReservaFactory.criar_reserva(usuario, sala_escolhida, data_reserva, hora_inicio, hora_fim)
+                    reserva = ReservaFactory.criar_reserva(usuario, sala_escolhida, inicio_real, fim_real)
 
                     if reserva:
                         print(f"{reserva}")
                     
-
-                elif acao == "2":
+                # LISTAR RESERVAS DO USUÁRIO
+                elif acao == "3":
 
                     reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
                     if reservas_usuario:
                         print(f"Suas reservas ativas, {usuario.nome}:")
                         for r in reservas_usuario:
                             print(f" -> {r}")
+
                     else:
                         print("Você não tem reservas ativas.")
 
-                elif acao == "3":
+                # MODIFICAR RESERVA
+                elif acao == "4":
                     
                     reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
                     if not reservas_usuario:
                         print("Você não tem reservas para modificar.")
+
                     else:
                         print("Suas reservas:")
+
                         for idx, r in enumerate(reservas_usuario, 1):
                             print(f"{idx}- {r}")
+
                         escolha = input("Digite o número da reserva que deseja modificar: ")
+
                         try:
                             idx = int(escolha) - 1
                             if idx < 0 or idx >= len(reservas_usuario):
                                 print("Número inválido. Encerrando.")
                                 return
+                            
                             reserva_selecionada = reservas_usuario[idx]
+                            nova_data_str = input("Digite a nova data da reserva (dd/mm/yyyy): ")
                             nova_hora_inicio_str = input("Digite a nova hora de início (HH:MM): ")
                             nova_hora_fim_str = input("Digite a nova hora de término (HH:MM): ")
+
+                            nova_data = datetime.strptime(nova_data_str, "%d/%m/%Y")
                             nova_hora_inicio = datetime.strptime(nova_hora_inicio_str, "%H:%M")
                             nova_hora_fim = datetime.strptime(nova_hora_fim_str, "%H:%M")
-                            ReservaFactory.modificar_reserva(reserva_selecionada, reserva_selecionada.data_reserva, nova_hora_inicio, nova_hora_fim)
-                            print(f"Suas reservas ativas, {usuario.nome}:")
+
+                            novo_inicio_real = datetime(nova_data.year, nova_data.month, nova_data.day, nova_hora_inicio.hour, nova_hora_inicio.minute)
+                            novo_fim_real = datetime(nova_data.year, nova_data.month, nova_data.day, nova_hora_fim.hour, nova_hora_fim.minute)
+                            
+                            ReservaFactory.modificar_reserva(reserva_selecionada, novo_inicio_real, novo_fim_real)
+
                             reservas_modificadas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+
+                            print(f"Suas reservas ativas, {usuario.nome}:")
                             for r in reservas_modificadas_usuario:
                                 print(f" -> {r}")
+
                         except ValueError:
                             print("Entrada inválida. Encerrando.")
                             return
 
-                elif acao == "4":
-                    return
-                
-                else:
-                    print("Ação inválida. Tente novamente.")
+                # CANCELAR RESERVA
+                elif acao == "5":
+                    reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
 
+                    if not reservas_usuario:
+                        print("Você não tem reservas para cancelar.")
+
+                    else:
+                        print("Suas reservas:")
+                        for idx, r in enumerate(reservas_usuario, 1):
+                            print(f"{idx}- {r}")
+
+                        escolha = input("Digite o número da reserva que deseja cancelar: ")
+
+                        try:
+                            idx = int(escolha) - 1
+                            if idx < 0 or idx >= len(reservas_usuario):
+                                print("Número inválido. Encerrando.")
+                                return
+                            
+                            reserva_selecionada = reservas_usuario[idx]
+                            reserva_selecionada.cancelar()
+                            gerenciador.remover_reserva(reserva_selecionada)
+                            print(f"Reserva cancelada com sucesso.")
+
+                            reservas_canceladas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
+                            print(f"Suas reservas ativas, {usuario.nome}:")
+                            for r in reservas_canceladas_usuario:
+                                print(f" -> {r}")
+
+                        except ValueError:
+                            print("Entrada inválida. Encerrando.")
+                            return
+                        
+                elif acao == "6":
+                    break
+
+                print("""\nMenu de Ações:
+                1- Ver salas disponíveis
+                2- Fazer reserva
+                3- Listar minhas reservas
+                4- Modificar reserva
+                5- Cancelar reserva
+                6- Sair""")
                 acao = input("Escolha uma ação: ")
 
         if op == "2":
 
+            data_str = input("Digite a data do relatório (dd/mm/yyyy): ")
+            try:
+                data = datetime.strptime(data_str, "%d/%m/%Y")
+            except:
+                print("Formato inválido.")
+                continue
+
+            reservas_do_dia = gerenciador.obter_reservas_por_data(data)
+
+            if not reservas_do_dia:
+                print(f"Nenhuma reserva confirmada para {data_str}.")
+            else:
+                print(f"\n=== RELATÓRIO DIÁRIO - {data_str} ===\n")
+
+                salas_dict = {}
+
+                for r in reservas_do_dia:
+                    chave = r.sala.numero_sala
+                    if chave not in salas_dict:
+                        salas_dict[chave] = []
+                    salas_dict[chave].append(r)
+                
+                for num_sala in sorted(salas_dict.keys()):
+                    print(f"Sala {num_sala}:")
+                    for r in salas_dict[num_sala]:
+                        inicio = r.data_hora_inicio.strftime("%H:%M")
+                        fim = r.data_hora_fim.strftime("%H:%M")
+                        print(f"  - {inicio} - {fim} : {r.usuario.nome} ({r.usuario.vinculo})")
+        
+        if op == "3":
             print("Encerrando o sistema. Até mais!")
             return
 
         print("""\nMenu:
           1- Entrar
-          2- Sair""")
+          2- Relatório Diário
+          3- Sair""")
         op = input("Escolha uma opção: ")
     
 
