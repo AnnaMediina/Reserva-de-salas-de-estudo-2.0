@@ -14,28 +14,18 @@ Este projeto implementa um sistema para reserva de salas em um campus universit�
 ## 📦 Estrutura do Projeto
 
 docs/
-
 └── diagrama_reserva_salas.pdf # Diagrama UML do projeto
 
 src/
-
-├── main.py # Ponto de entrada e menu interativo
-
-├── sala.py # Classes Sala, Laboratorio, EstudoIndividual, EstudoEmGrupo
-
-├── sala_factory.py # Factories para criação de salas
-
-├── usuario.py # Usuario, Professor, Aluno, Externo (observers)
-
-├── reserva.py # Reserva (subject) – notificações push/pull
-
-├── observer.py # Interfaces Observer e Subject
-
-├── gerenciador_reservas.py # Singleton – repositório e consultas
-
-├── estrategia_reserva.py # Strategy – políticas de gerenciamento de conflito
-
-└── reserva_factory.py # Criação/modificação de reservas com política
+├── main.py     # Ponto de entrada e menu interativo
+├── sala.py   # Classes Sala, Laboratorio, EstudoIndividual, EstudoEmGrupo
+├── sala_factory.py   # Factories para criação de salas
+├── usuario.py   # Usuario, Professor, Aluno, Externo (observers)
+├── reserva.py   # Reserva (subject) – notificações push/pull
+├── observer.py   # Interfaces Observer e Subject
+├── gerenciador_reservas.py   # Singleton – repositório e consultas
+├── estrategia_reserva.py   # Strategy – políticas de gerenciamento de conflito
+└── reserva_factory.py   # Criação/modificação de reservas com política
 
 
 ## 🚀 Como Executar
@@ -50,14 +40,10 @@ python main.py
 ```
 
 ## Exemplo de fluxo rápido
+
 1. Inicie o programa e escolha a política de reserva.
-
 2. Entre como aluno → crie uma reserva → liste suas reservas.
-
 3. Modifique a reserva (nova data/hora) – veja a notificação push.
-
 4. Cancele a reserva – veja a notificação pull.
-
 5. Gere o relatório diário (opção 2 do menu principal) para uma data.
-
 6. Teste a política “Prioridade Docente” – um professor deve sobrescrever reserva de aluno.
