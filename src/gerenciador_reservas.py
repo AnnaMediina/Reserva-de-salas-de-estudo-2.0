@@ -1,7 +1,7 @@
 import threading
 from datetime import datetime
 
-# o singleton é o gerenciador de reservas, ele é responsável por armazenar todas as reservas feitas no sistema. Ele garante que haja apenas uma instância do gerenciador, para evitar inconsistências.
+# o singleton é o gerenciador de reservas, ele é responsável por armazenar todas as reservas feitas no sistema. Ele garante que haja apenas uma instância do gerenciador de reservas, para evitar inconsistências.
 class GerenciadorDeReservas:
     _instancia = None
     _lock = threading.Lock()
