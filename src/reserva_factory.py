@@ -5,6 +5,7 @@ from reserva import Reserva
 from estrategia_reserva import PoliticaDeReserva, PoliticaPrimeiroChegar
 from gerenciador_reservas import GerenciadorDeReservas
 
+# a factory cria os objetos do tipo Reserva ou os modifica, mas antes faz a verificação a partir da política de agendamento escolhida se a reserva pode ser feita ou nao.
 class ReservaFactory:
     _politica_atual = PoliticaPrimeiroChegar()
 
