@@ -1,37 +1,39 @@
-class Sala:
-    def __init__(self, numero, capacidade):
-        self.numero = numero
-        self.capacidade = capacidade
+from abc import ABC, abstractmethod
 
-    def getNumero(self):
-        return self.numero
-    
-    def getCapacidade(self):
-        return self.capacidade
-    
-    def isReservada(self):
-        return self.reservada
+# classe base para as salas com atributos comuns e método abstrato para detalhes específicos.
+class Sala(ABC):
+    def __init__(self, numero_sala: str, capacidade_total: int):
+        self.numero_sala = numero_sala
+        self.capacidade_total = capacidade_total
 
-class Labortorio(Sala):
-    def __init__(self, numero, capacidade):
-        super().__init__(numero, capacidade)
+    @abstractmethod
+    def obter_detalhes(self) -> str:
+        pass
 
-    def getTipo(self):
-        return "Laboratório"
-    
+    def __str__(self):
+        return f"Sala {self.numero_sala} (Capacidade: {self.capacidade_total})"
+
+class Laboratorio(Sala):
+    def __init__(self, numero_sala: str, capacidade_total: int, equipamentos: list):
+        super().__init__(numero_sala, capacidade_total)
+        self.equipamentos = equipamentos
+
+    def obter_detalhes(self) -> str:
+        lista_equip = ", ".join(self.equipamentos) if self.equipamentos else "Nenhum"
+        return f"Laboratório, Equipamentos: {lista_equip}"
     
 class EstudoIndividual(Sala):
-    def __init__(self, numero, capacidade):
-        super().__init__(numero, capacidade)
+    def __init__(self, numero_sala: str):
+        super().__init__(numero_sala, capacidade_total=1)
 
-    def getTipo(self):
+    def obter_detalhes(self) -> str:
         return "Estudo Individual"
     
+class EstudoEmGrupo(Sala):
+    def __init__(self, numero_sala: str, capacidade_total: int, quantidade_mesas: int, quantidade_quadros: int):
+        super().__init__(numero_sala, capacidade_total)
+        self.quantidade_mesas = quantidade_mesas
+        self.quantidade_quadros = quantidade_quadros
 
-class EstudoGrupo(Sala):
-    def __init__(self, numero, capacidade):
-        super().__init__(numero, capacidade)
-
-    def getTipo(self):
-        return "Estudo em Grupo"
-    
+    def obter_detalhes(self) -> str:
+        return f"Estudo em Grupo, {self.quantidade_mesas} Mesas, {self.quantidade_quadros} Quadros"

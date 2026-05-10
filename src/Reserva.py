@@ -1,41 +1,41 @@
-from Observer import Subject
+from datetime import datetime
+from usuario import Usuario
+from sala import Sala
+from observer import Subject
 
+# reserva: é o sujeito observado, ela guarda as informações da reserva, como data, hora, sala e usuário. 
 class Reserva(Subject):
-    def __init__(self, sala, usuario, data, horaInicio, horaFim):
-        super().__init__()
-        self.sala = sala
+    def __init__(self, usuario: Usuario, sala: Sala, data: datetime, hora_inicio: datetime, hora_fim: datetime):
+        super().__init__() # Inicializa a lista de observers
         self.usuario = usuario
-        self.data = data
-        self.hora_inicio = horaInicio
-        self.hora_fim = horaFim
-        self.status = "Confirmado"
+        self.sala = sala
+        self.data_reserva = data
+        self.hora_inicio = hora_inicio
+        self.hora_fim = hora_fim
+        self.status = "Confirmada"
+        self.add_observer(self.usuario)
 
-    def getSala(self):
-        return self.sala
-    
-    def getUsuario(self):
-        return self.usuario
-    
-    def getData(self):
-        return self.data
-    
-    def getHoraInicio(self):
-        return self.hora_inicio
-    
-    def getHoraFim(self):
-        return self.hora_fim
+    def modificar_horario(self, novo_inicio: datetime, novo_fim: datetime):
+        self.hora_inicio = novo_inicio
+        self.hora_fim = novo_fim
 
-    def getStatus(self):
-        return self.status
-    
-    def cancelarReserva(self):
-        self.status = "Cancelado"
-        self.notificaObservadores(self.sala, "cancelada")
+        self.notify_push(
+            f"Horário da sala {self.sala.numero_sala} alterado.", 
+            {"novo_inicio": novo_inicio.strftime("%H:%M"), "novo_fim": novo_fim.strftime("%H:%M")}
+        )
 
-    def modificarReserva(self, nova_data, nova_hora_inicio, nova_hora_fim):
-        self.data = nova_data
-        self.hora_inicio = nova_hora_inicio
-        self.hora_fim = nova_hora_fim
-        self.notificaObservadores(self.sala, "modificada")
-    
-    
+    def cancelar(self):
+        self.status = "Cancelada"
+        self.notify_pull()
+
+    def obter_estado(self):
+        return {
+            "sala": self.sala.numero_sala,
+            "data_reserva": self.data_reserva.strftime("%d/%m/%Y"),
+            "hora_inicio": self.hora_inicio.strftime("%H:%M"),
+            "hora_fim": self.hora_fim.strftime("%H:%M"),
+            "status": self.status
+        }
+
+    def __str__(self):
+        return f"Reserva [{self.status}]: {self.sala.numero_sala} por {self.usuario.nome}. Data ({self.data_reserva.strftime('%d/%m/%Y')}) - Horário: {self.hora_inicio.strftime('%H:%M')} - {self.hora_fim.strftime('%H:%M')}"

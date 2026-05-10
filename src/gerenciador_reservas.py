@@ -1,0 +1,39 @@
+import threading
+from datetime import datetime
+
+# o singleton é o gerenciador de reservas, ele é responsável por armazenar todas as reservas feitas no sistema. Ele garante que haja apenas uma instância do gerenciador, para evitar inconsistências.
+class GerenciadorDeReservas:
+    _instancia = None
+    _lock = threading.Lock()
+
+    def __init__(self):
+        if GerenciadorDeReservas._instancia is not None:
+            raise Exception("Erro: O Gerenciador é um Singleton. Use GerenciadorDeReservas.get_instancia()")
+        
+        self.reservas = [] # lista global
+
+    @classmethod
+    def get_instancia(cls):
+        with cls._lock:
+            if cls._instancia is None:
+                cls._instancia = GerenciadorDeReservas()
+        return cls._instancia
+
+    def adicionar_reserva(self, reserva):
+        self.reservas.append(reserva)
+
+    def remover_reserva(self, reserva):
+        if reserva in self.reservas:
+            self.reservas.remove(reserva)
+    
+    def obter_todas_reservas(self):
+        return self.reservas
+
+    def obter_reservas_por_sala(self, numero_sala: str):
+        return [r for r in self.reservas if r.sala.numero_sala == numero_sala and r.status == "Confirmada"]
+    
+    def obter_reservas_por_data(self, data: datetime):
+        return [r for r in self.reservas if r.data_reserva.strftime("%d/%m/%Y") == data.strftime("%d/%m/%Y") and r.status == "Confirmada"]
+    
+    def obter_reservas_por_usuario(self, usuario):
+        return [r for r in self.reservas if r.usuario == usuario and r.status == "Confirmada"]
