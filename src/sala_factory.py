@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from sala import Laboratorio, EstudoIndividual, EstudoEmGrupo
 
+# a factory da sala cria as salas desejadas, os laboratórios, as de estudos individuais e as de estudo em grupo, com suas respectivas capacidades, e equipamentos.
 class SalaFactory(ABC):
     @abstractmethod
     def criar_sala(self, numero: str, **kwargs):
