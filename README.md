@@ -1,7 +1,6 @@
 # 🏫 Sistema de Reserva de Salas de Estudo
 
 Este projeto implementa um sistema para reserva de salas, aplicando os padrões de projeto **Factory Method**, **Strategy**, **Observer** e **Singleton**. O usuário é capaz de criar uma "conta" no sistema gerenciador de reservas, e então no menu é possível escolher entre 6 opções, sendo elas, ver as salas disponíveis para uma data e horários específicos, fazer uma reserva, listas as suas reservas, modificar reserva, cancelar reserva ou sair. 
----
 
 ## 📦 Estrutura do Projeto
 
