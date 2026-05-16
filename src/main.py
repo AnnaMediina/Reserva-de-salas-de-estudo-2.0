@@ -4,6 +4,7 @@ from sala_factory import LaboratorioFactory, EstudoIndividualFactory, EstudoEmGr
 from estrategia_reserva import PoliticaPrimeiroChegar, PoliticaPrioridadeDocente
 from gerenciador_reservas import GerenciadorDeReservas
 from datetime import datetime, timedelta
+from reserva_proxy import ReservaProxy
 
 def main():
     print("-"*20)
@@ -146,7 +147,7 @@ def main():
                     inicio_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_inicio.hour, hora_inicio.minute)
                     fim_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_fim.hour, hora_fim.minute)
 
-                    reserva = ReservaFactory.criar_reserva(usuario, sala_escolhida, inicio_real, fim_real)
+                    reserva = ReservaProxy.criar_reserva(usuario, sala_escolhida, inicio_real, fim_real)
 
                     if reserva:
                         print(f"{reserva}")
