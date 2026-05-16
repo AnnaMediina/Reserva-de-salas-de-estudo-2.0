@@ -20,6 +20,7 @@ src/
 ├── estrategia_reserva.py   # Strategy – políticas de gerenciamento de conflito\\\
 ├── teste_prioridade_docente.py   # arquivo teste com a prioridade para os professores, com a criação de usuários e teste de funcionalidades\\\
 ├── teste_primeiro_chegar.py  # arquivo teste com a prioridade de primeiro a chegar, com a criação de usuários e teste de funcionalidades\\\
+├── reserva_proxy.py   # controle de acessos, limite de reservas
 └── reserva_factory.py   # Criação/modificação de reservas com política
 
 
@@ -56,7 +57,8 @@ python main.py
 
 ## 👥 Autores
 
-- [Anna Clara Medina Roissmann]  
-- [Nicolas de Mello Freitas]
+- Anna Clara Medina Roissmann 
+- Letícia Vieira
+- Renan Kohatsu
 
 ---
