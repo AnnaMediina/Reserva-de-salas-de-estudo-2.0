@@ -3,8 +3,8 @@ from reserva_factory import ReservaFactory
 from sala_factory import LaboratorioFactory, EstudoIndividualFactory, EstudoEmGrupoFactory
 from estrategia_reserva import PoliticaPrimeiroChegar, PoliticaPrioridadeDocente
 from gerenciador_reservas import GerenciadorDeReservas
-from datetime import datetime, timedelta
-from reserva_proxy import ReservaProxy
+from datetime import datetime
+from reserva_proxy import ReservaProxy, ReservaReal
 
 def main():
     print("-"*20)
@@ -16,10 +16,10 @@ def main():
     lab2 = fabrica_lab.criar_sala("L-2", capacidade=25, equipamentos=["PCs", "Projetor", "Paquímetro", "Réguas", "Galvanômetro"])
     lab3 = fabrica_lab.criar_sala("L-3", capacidade=25, equipamentos=["PCs", "Projetor", "Balança", "Microscópios", "Estufa", "Autoclave"])
 
-    farica_estudoIndividual = EstudoIndividualFactory()
-    estudo1 = farica_estudoIndividual.criar_sala("E-1")
-    estudo2 = farica_estudoIndividual.criar_sala("E-2")
-    estudo3 = farica_estudoIndividual.criar_sala("E-3")
+    fabrica_estudoIndividual = EstudoIndividualFactory()
+    estudo1 = fabrica_estudoIndividual.criar_sala("E-1")
+    estudo2 = fabrica_estudoIndividual.criar_sala("E-2")
+    estudo3 = fabrica_estudoIndividual.criar_sala("E-3")
 
     fabrica_estudoGrupo = EstudoEmGrupoFactory()
     grupo1 = fabrica_estudoGrupo.criar_sala("G-1", capacidade=20, mesas=10, quadros=5)
@@ -34,12 +34,9 @@ def main():
 
     gerenciador = GerenciadorDeReservas.get_instancia()
     ReservaFactory.definir_politica(PoliticaPrimeiroChegar())
-    print("\nPolítica de Reserva Atual: Primeiro a Chegar. Deseja mudar para Prioridade Docente? (s/n)")
-    escolha = input().strip().lower()
-    if escolha == "s":
-        ReservaFactory.definir_politica(PoliticaPrioridadeDocente())
-        print("Política de Reserva alterada para Prioridade Docente.")
-    
+
+    reserva = ReservaProxy(ReservaReal())
+
     print("""\nMenu:
     1- Entrar
     2- Relatório Diário
@@ -74,11 +71,6 @@ def main():
             elif tipo == "visitante":
                 cpf = input("Digite seu CPF: ")
                 usuario = Externo(nome, cpf)
-
-                reservas_usuario = gerenciador.obter_reservas_por_usuario(usuario)
-
-                if reservas_usuario:
-                    print(f"\nBem-vindo de volta, {usuario.nome}!\n")
 
             else:
                 print("Tipo de usuário inválido. Encerrando.")
@@ -147,7 +139,7 @@ def main():
                     inicio_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_inicio.hour, hora_inicio.minute)
                     fim_real = datetime(data_reserva.year, data_reserva.month, data_reserva.day, hora_fim.hour, hora_fim.minute)
 
-                    reserva = ReservaProxy.criar_reserva(usuario, sala_escolhida, inicio_real, fim_real)
+                    reserva = reserva.criar_reserva(usuario, sala_escolhida, inicio_real, fim_real)
 
                     if reserva:
                         print(f"{reserva}")
